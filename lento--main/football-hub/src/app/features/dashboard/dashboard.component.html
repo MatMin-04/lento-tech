@@ -1,0 +1,89 @@
+<div class="min-h-screen content-container flex flex-col items-center pt-16 pb-32">
+  
+  <!-- Hero Section -->
+  <header class="flex flex-col items-center text-center max-w-4xl mx-auto mb-20 relative z-10 w-full">
+    
+    <!-- Top Pill Badge -->
+    <div class="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 inline-flex items-center gap-2 text-xs font-semibold text-nexo-glow-magenta tracking-widest uppercase">
+      <span class="w-1.5 h-1.5 rounded-full bg-nexo-glow-magenta shadow-[0_0_8px_rgba(217,70,239,0.8)] animate-pulse"></span>
+      Live Football Data
+    </div>
+
+    <!-- Mega Title -->
+    <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-serif font-bold text-white tracking-tight leading-[1.1] mb-6">
+      Every Match. Every Moment. Live.
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-lg md:text-xl text-white/60 font-medium max-w-2xl mb-12">
+      Turn predictions into profits with real-time insights, live scores, and AI-powered match tracking from top European leagues.
+    </p>
+
+    <!-- Main CTA -->
+    <button class="px-8 py-4 rounded-full bg-white text-nexo-black font-bold text-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all hover:-translate-y-1">
+      Explore Now
+    </button>
+  </header>
+
+  <!-- Navigation Filters -->
+  <section class="mb-16 w-full max-w-5xl z-10 relative flex justify-center" *ngIf="leagues$ | async as leagues">
+    <app-league-nav 
+      [leagues]="leagues"
+      [selectedLeagueId]="(selectedLeagueId$ | async) ?? 0"
+      (leagueSelected)="onLeagueSelected($event)">
+    </app-league-nav>
+  </section>
+
+  <main class="w-full relative z-10">
+    
+    <!-- Asymmetric Glass Cards Area (Live Matches) -->
+    <div class="flex flex-wrap justify-center gap-8 mb-24 max-w-6xl mx-auto" *ngIf="matches$ | async as matches">
+      <!-- Staggered mapping for asymmetry -->
+      <div *ngFor="let match of matches; let i = index" 
+           class="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] transition-all duration-700 hover:-translate-y-3"
+           [ngClass]="{'md:mt-16': i % 2 !== 0, 'lg:mt-12': i % 3 === 1, 'lg:mt-24': i % 3 === 2}">
+        <app-match-card [match]="match" [routerLink]="['/match', match.id]"></app-match-card>
+      </div>
+      
+      <div *ngIf="matches.length === 0" class="w-full py-16 text-center text-white/50 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-md">
+        No matches currently available for the selected view.
+      </div>
+    </div>
+
+    <!-- Upcoming Matches Glass Section -->
+    <section class="max-w-6xl mx-auto mt-24">
+      <div class="flex items-center gap-4 mb-10 pl-4 border-l-2 border-nexo-glow-green">
+        <h2 class="text-3xl font-serif font-bold tracking-wide text-white">Next Matchday: Serie A</h2>
+      </div>
+      
+      <ng-container *ngIf="upcomingSerieAMatches$ | async as upcomingMatches">
+        <div *ngIf="upcomingMatches && upcomingMatches.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div *ngFor="let match of upcomingMatches; let i = index" 
+               class="nexo-glass rounded-3xl p-6 transition-all hover:border-nexo-glow-green/50 cursor-pointer group hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(16,185,129,0.15)]"
+               [routerLink]="['/match', match.id]">
+            <div class="text-xs text-white/50 font-medium mb-5 flex items-center justify-between">
+              <span>{{ match.startTime | date:'EEE, d MMM - HH:mm' }}</span>
+            </div>
+            <div class="flex justify-between items-center w-full">
+              <div class="flex flex-col items-center flex-1 gap-3">
+                <img [src]="match.homeTeam.logo" alt="" class="w-10 h-10 object-contain drop-shadow">
+                <span class="text-xs font-semibold text-white/90 truncate w-full text-center">{{ match.homeTeam.shortName }}</span>
+              </div>
+              <div class="text-[10px] font-bold text-white/30 px-1 opacity-50">VS</div>
+              <div class="flex flex-col items-center flex-1 gap-3">
+                <img [src]="match.awayTeam.logo" alt="" class="w-10 h-10 object-contain drop-shadow">
+                <span class="text-xs font-semibold text-white/90 truncate w-full text-center">{{ match.awayTeam.shortName }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="!upcomingMatches || upcomingMatches.length === 0" class="w-full py-16 text-center text-white/50 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md">
+          <p class="mb-2">No upcoming matches visible at the moment.</p>
+        </div>
+      </ng-container>
+    </section>
+
+  </main>
+
+</div>

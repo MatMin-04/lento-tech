@@ -1,0 +1,17 @@
+<nav class="flex gap-2 p-1.5 nexo-glass rounded-full overflow-x-auto no-scrollbar max-w-fit mx-auto">
+  <!-- All button -->
+  <button 
+    class="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap"
+    [ngClass]="!selectedLeagueId ? 'bg-white text-nexo-black shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'text-white/60 hover:text-white hover:bg-white/10'"
+    (click)="selectLeague(0)">
+    All Matches
+  </button>
+  
+  <button *ngFor="let league of leagues"
+    class="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap relative group"
+    [ngClass]="selectedLeagueId === league.id ? 'bg-white text-nexo-black shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'text-white/60 hover:text-white hover:bg-white/10'"
+    (click)="selectLeague(league.id)">
+    <div class="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" [ngClass]="selectedLeagueId === league.id ? 'bg-nexo-black' : 'bg-' + league.themeColor" *ngIf="selectedLeagueId !== league.id"></div>
+    <span class="truncate">{{ league.name }}</span>
+  </button>
+</nav>

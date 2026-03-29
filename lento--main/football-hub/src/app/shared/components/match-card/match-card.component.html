@@ -1,0 +1,60 @@
+<div class="nexo-glass rounded-3xl p-6 md:p-8 transition-all duration-500 hover:border-white/30 cursor-pointer overflow-hidden relative group"
+     [ngClass]="{'shadow-[0_15px_40px_-15px_rgba(217,70,239,0.2)] hover:shadow-[0_20px_50px_-15px_rgba(217,70,239,0.4)] hover:-translate-y-2': match.status === 'LIVE', 'hover:-translate-y-2 hover:shadow-[0_15px_30px_-15px_rgba(255,255,255,0.1)]': match.status !== 'LIVE'}">
+  
+  <!-- Subtle glowing backdrop for Live matches -->
+  <div *ngIf="match.status === 'LIVE'" class="absolute -top-[50px] -right-[50px] w-32 h-32 bg-nexo-glow-magenta/20 blur-3xl rounded-full"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 w-full">
+    <!-- Header: Status / Time -->
+    <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+      <!-- Time / Status -->
+      <div class="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/50">
+        <span *ngIf="match.status === 'SCHEDULED'" class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-white/30"></span> {{ match.startTime | date:'EEE d, HH:mm' }}</span>
+        <span *ngIf="match.status === 'FINISHED'" class="text-white/40">Full Time</span>
+      </div>
+
+      <!-- Live Badge -->
+      <div *ngIf="match.status === 'LIVE'" class="border border-nexo-glow-green/40 bg-nexo-glow-green/10 px-3 py-1 rounded-full flex items-center gap-2 backdrop-blur-sm shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+         <span class="w-1.5 h-1.5 bg-nexo-glow-green rounded-full animate-pulse shadow-[0_0_5px_currentColor]"></span>
+         <span class="text-[9px] md:text-[10px] font-bold text-nexo-glow-green tracking-widest uppercase">Live Insight</span>
+         <span class="text-[9px] md:text-[10px] font-black text-white ml-1" *ngIf="match.minute">{{ match.minute }}'</span>
+      </div>
+    </div>
+
+    <!-- Teams & Score Area -->
+    <div class="flex items-center justify-between">
+      
+      <!-- Home Team -->
+      <div class="flex flex-col flex-1 items-start gap-3">
+        <div class="w-12 h-12 md:w-14 md:h-14 p-2 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <img [src]="match.homeTeam.logo" [alt]="match.homeTeam.name" class="max-w-full max-h-full object-contain filter drop-shadow-lg">
+        </div>
+        <span class="font-semibold text-white/90 text-[13px] md:text-sm tracking-wide line-clamp-1">{{ match.homeTeam.shortName }}</span>
+      </div>
+
+      <!-- Score -->
+      <div class="flex flex-col items-center justify-center px-2">
+        <ng-container *ngIf="match.status === 'SCHEDULED'">
+          <div class="text-xl md:text-2xl font-serif text-white/30 tracking-widest font-light">V S</div>
+        </ng-container>
+        <ng-container *ngIf="match.status !== 'SCHEDULED'">
+          <div class="flex items-center gap-3">
+            <span class="text-4xl md:text-5xl font-serif font-bold tracking-tighter" [ngClass]="match.status === 'LIVE' ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'text-white/60'">{{ match.homeScore }}</span>
+            <span class="text-white/20 text-3xl font-light leading-none mb-1">:</span>
+            <span class="text-4xl md:text-5xl font-serif font-bold tracking-tighter" [ngClass]="match.status === 'LIVE' ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'text-white/60'">{{ match.awayScore }}</span>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Away Team -->
+      <div class="flex flex-col flex-1 items-end gap-3 text-right">
+        <div class="w-12 h-12 md:w-14 md:h-14 p-2 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <img [src]="match.awayTeam.logo" [alt]="match.awayTeam.name" class="max-w-full max-h-full object-contain filter drop-shadow-lg">
+        </div>
+        <span class="font-semibold text-white/90 text-[13px] md:text-sm tracking-wide line-clamp-1">{{ match.awayTeam.shortName }}</span>
+      </div>
+
+    </div>
+  </div>
+</div>
