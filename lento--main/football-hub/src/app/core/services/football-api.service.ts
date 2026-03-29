@@ -23,8 +23,9 @@ export class FootballApiService {
 
   // Simple cache for rate limiting fallback
   private liveMatchesCache = new BehaviorSubject<Match[]>([]);
+  private upcomingMatchesCache = new Map<number, Match[]>();
+  private standingsCache = new Map<number, Standing[]>();
   private allMatchesCache = new Map<number, Match[]>();
-  private upcomingMatchesCache = new Map<number, Match[]>(); // Cache per le prossime partite
 
   constructor(private http: HttpClient) { }
 
@@ -121,6 +122,42 @@ export class FootballApiService {
              return of(this.upcomingMatchesCache.get(leagueId) || []);
           })
         );
+      }),
+      shareReplay(1)
+    );
+  }
+
+  getStandings(leagueId: number): Observable<Standing[] | null> {
+    if (leagueId === 0) return of(null);
+    
+    return this.http.get<any>(`${environment.footballApiUrl}/competitions/${leagueId}/standings`, { headers: this.headers }).pipe(
+      map(res => {
+        if (!res || !res.standings || res.standings.length === 0) return [];
+        const totalStanding = res.standings.find((s: any) => s.type === 'TOTAL');
+        if (!totalStanding || !totalStanding.table) return [];
+        
+        return totalStanding.table.map((s: any) => ({
+          position: s.position,
+          team: {
+            id: s.team.id,
+            name: s.team.name,
+            shortName: s.team.shortName,
+            tla: s.team.tla,
+            logo: s.team.crest
+          },
+          playedGames: s.playedGames,
+          won: s.won,
+          draw: s.draw,
+          lost: s.lost,
+          points: s.points,
+          goalsFor: s.goalsFor,
+          goalsAgainst: s.goalsAgainst,
+          goalDifference: s.goalDifference
+        }));
+      }),
+      tap(standings => this.standingsCache.set(leagueId, standings)),
+      catchError(() => {
+        return of(this.standingsCache.get(leagueId) || []);
       }),
       shareReplay(1)
     );

@@ -28,13 +28,13 @@ export interface League {
 }
 
 export interface Standing {
+  position: number;
   team: Team;
-  rank: number;
-  points: number;
-  played: number;
+  playedGames: number;
   won: number;
-  drawn: number;
+  draw: number;
   lost: number;
+  points: number;
   goalsFor: number;
   goalsAgainst: number;
   goalDifference: number;

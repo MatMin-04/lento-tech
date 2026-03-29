@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { FootballApiService } from '../../core/services/football-api.service';
-import { League, Match } from '../../core/models/football.models';
+import { League, Match, Standing } from '../../core/models/football.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +14,7 @@ export class DashboardComponent implements OnInit {
   leagues$!: Observable<League[]>;
   matches$!: Observable<Match[]>;
   upcomingMatches$!: Observable<Match[]>;
+  standings$!: Observable<Standing[] | null>;
   selectedLeagueLabel$!: Observable<string>;
   
   private selectedLeagueIdSubject = new BehaviorSubject<number>(0);
@@ -38,6 +39,10 @@ export class DashboardComponent implements OnInit {
     // Reactive upcoming matches based on selection
     this.upcomingMatches$ = this.selectedLeagueId$.pipe(
       switchMap(leagueId => this.api.getUpcomingMatches(leagueId))
+    );
+
+    this.standings$ = this.selectedLeagueId$.pipe(
+      switchMap(id => this.api.getStandings(id))
     );
 
     // Dynamic label for the Next Matchday section

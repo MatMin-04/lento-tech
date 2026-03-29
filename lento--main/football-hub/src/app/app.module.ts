@@ -10,6 +10,7 @@ import { LeagueNavComponent } from './shared/components/league-nav/league-nav.co
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { LeagueComponent } from './features/league/league.component';
 import { MatchDetailComponent } from './features/match-detail/match-detail.component';
+import { StandingsComponent } from './shared/components/standings/standings.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MatchDetailComponent } from './features/match-detail/match-detail.compo
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    StandingsComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
