@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { FootballApiService } from '../../core/services/football-api.service';
 import { League, Match } from '../../core/models/football.models';
 
@@ -13,7 +13,8 @@ export class DashboardComponent implements OnInit {
 
   leagues$!: Observable<League[]>;
   matches$!: Observable<Match[]>;
-  upcomingSerieAMatches$!: Observable<Match[]>;
+  upcomingMatches$!: Observable<Match[]>;
+  selectedLeagueLabel$!: Observable<string>;
   
   private selectedLeagueIdSubject = new BehaviorSubject<number>(0);
   selectedLeagueId$ = this.selectedLeagueIdSubject.asObservable();
@@ -34,8 +35,20 @@ export class DashboardComponent implements OnInit {
       })
     );
 
-    // Fetch upcoming Serie A matches (League ID 2019) for the next matchday
-    this.upcomingSerieAMatches$ = this.api.getUpcomingMatches(2019);
+    // Reactive upcoming matches based on selection
+    this.upcomingMatches$ = this.selectedLeagueId$.pipe(
+      switchMap(leagueId => this.api.getUpcomingMatches(leagueId))
+    );
+
+    // Dynamic label for the Next Matchday section
+    this.selectedLeagueLabel$ = this.selectedLeagueId$.pipe(
+      switchMap(id => {
+        if (id === 0) return of('All Matches');
+        return this.leagues$.pipe(
+          map(leagues => leagues.find(l => l.id === id)?.name || 'Matches')
+        );
+      })
+    );
   }
 
   onLeagueSelected(leagueId: number): void {

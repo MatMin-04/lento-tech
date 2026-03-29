@@ -80,23 +80,40 @@ export class FootballApiService {
         const today = new Date();
         const dateFrom = new Date(today);
         const dateTo = new Date(today);
-        dateTo.setDate(today.getDate() + 30); // Look ahead 1 month just in case
+        // Se leagueId è 0, siamo costretti ad usare l'endpoint globale con range di 10 giorni (limite free tier).
+        // Se leagueId è specifico, usiamo l'endpoint della competizione che permette range più ampi (es. 21 giorni).
+        let url: string;
+        if (leagueId === 0) {
+          dateTo.setDate(today.getDate() + 10);
+          const competitionsParam = this.leagues.map(l => l.id).join(',');
+          url = `${environment.footballApiUrl}/matches?competitions=${competitionsParam}&dateFrom=${dateFrom.toISOString().split('T')[0]}&dateTo=${dateTo.toISOString().split('T')[0]}`;
+        } else {
+          dateTo.setDate(today.getDate() + 21);
+          url = `${environment.footballApiUrl}/competitions/${leagueId}/matches?dateFrom=${dateFrom.toISOString().split('T')[0]}&dateTo=${dateTo.toISOString().split('T')[0]}`;
+        }
 
-        const fromStr = dateFrom.toISOString().split('T')[0];
-        const toStr = dateTo.toISOString().split('T')[0];
-
-        return this.http.get<any>(`${environment.footballApiUrl}/competitions/${leagueId}/matches?dateFrom=${fromStr}&dateTo=${toStr}`, { headers: this.headers }).pipe(
+        return this.http.get<any>(url, { headers: this.headers }).pipe(
           map(res => {
             if (!res || !res.matches || res.matches.length === 0) return [];
             
-            // Filtriamo via le partite concluse o live per mantenere solo quelle future
-            const futureMatches = res.matches.filter((m: any) => m.status === 'SCHEDULED' || m.status === 'TIMED');
+            // Filtra solo i match programmati
+            let futureMatches = res.matches.filter((m: any) => m.status === 'SCHEDULED' || m.status === 'TIMED');
+            
             if (futureMatches.length === 0) return [];
 
-            const nextMatchday = futureMatches[0].matchday;
-            const nextMatchdayMatches = futureMatches.filter((m: any) => m.matchday === nextMatchday);
-            
-            return nextMatchdayMatches.map(this.mapMatch.bind(this));
+            // Ordina per data per garantire coerenza
+            futureMatches.sort((a: any, b: any) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime());
+
+            // Se è una lega specifica, prendiamo solo le partite del primo matchday disponibile
+            if (leagueId !== 0) {
+                const nextMatchday = futureMatches[0].matchday;
+                return futureMatches
+                  .filter((m: any) => m.matchday === nextMatchday)
+                  .map(this.mapMatch.bind(this));
+            }
+
+            // Per "All Matches", mostriamo le prossime 8 partite in ordine cronologico
+            return futureMatches.slice(0, 8).map(this.mapMatch.bind(this));
           }),
           tap(matches => this.upcomingMatchesCache.set(leagueId, matches)),
           catchError(() => {
