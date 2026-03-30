@@ -58,5 +58,25 @@ export class DashboardComponent implements OnInit {
 
   onLeagueSelected(leagueId: number): void {
     this.selectedLeagueIdSubject.next(leagueId);
+    
+    // Update Global Background Glow (Aurora Effect)
+    const root = document.documentElement;
+    let bg = '';
+    
+    switch (leagueId) {
+      case 2019: // Serie A
+        bg = 'radial-gradient(circle, rgba(0, 170, 255, 0.8) 0%, rgba(0, 170, 255, 0.4) 50%, transparent 100%)';
+        break;
+      case 2021: // Premier League
+        bg = 'radial-gradient(circle, rgba(107, 33, 168, 0.8) 0%, rgba(107, 33, 168, 0.4) 50%, transparent 100%)';
+        break;
+      case 2014: // La Liga
+        bg = 'radial-gradient(circle, rgba(250, 204, 21, 0.8) 0%, rgba(250, 204, 21, 0.4) 50%, transparent 100%)';
+        break;
+      default: // All Matches / Default (Green-Yellow Gradient)
+        bg = 'radial-gradient(circle, rgba(22, 163, 74, 0.8) 0%, rgba(132, 204, 22, 0.5) 45%, rgba(132, 204, 22, 0.2) 70%, transparent 100%)';
+    }
+    
+    root.style.setProperty('--aurora-bg', bg);
   }
 }

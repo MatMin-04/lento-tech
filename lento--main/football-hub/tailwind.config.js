@@ -20,9 +20,9 @@ module.exports = {
         'nexo-glow-green': '#10b981',
         
         // Legacy fallbacks if needed
-        'serie-a': '#10B981', 
-        'premier': '#EF4444', 
-        'laliga': '#F59E0B',
+        'serie-a': '#00AAFF', 
+        'premier': '#6B21A8', 
+        'laliga': '#FACC15',
       },
       animation: {
         'live-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',

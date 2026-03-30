@@ -1,0 +1,5 @@
+.hero-glow {
+  transition: 0.6s ease;
+  transition-property: background, border-color, shadow;
+  background: radial-gradient(circle at center, var(--glow-color) 0%, transparent 70%);
+}
