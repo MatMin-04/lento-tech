@@ -14,7 +14,9 @@ export class FootballApiService {
   private readonly leagues: League[] = [
     { id: 2019, name: 'Serie A', country: 'Italy', logo: 'assets/serie-a.png', themeColor: 'serie-a' },
     { id: 2021, name: 'Premier League', country: 'England', logo: 'assets/premier.png', themeColor: 'premier' },
-    { id: 2014, name: 'La Liga', country: 'Spain', logo: 'assets/laliga.png', themeColor: 'laliga' }
+    { id: 2014, name: 'La Liga', country: 'Spain', logo: 'assets/laliga.png', themeColor: 'laliga' },
+    { id: 2002, name: 'Bundesliga', country: 'Germany', logo: 'assets/bundesliga.png', themeColor: 'bundesliga' },
+    { id: 2015, name: 'Ligue 1', country: 'France', logo: 'assets/ligue1.png', themeColor: 'ligue1' }
   ];
 
   private readonly headers = new HttpHeaders({

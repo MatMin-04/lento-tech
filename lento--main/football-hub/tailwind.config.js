@@ -3,6 +3,13 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
   ],
+  safelist: [
+    'bg-serie-a',
+    'bg-premier',
+    'bg-laliga',
+    'bg-bundesliga',
+    'bg-ligue1',
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -23,6 +30,8 @@ module.exports = {
         'serie-a': '#00AAFF', 
         'premier': '#6B21A8', 
         'laliga': '#FACC15',
+        'bundesliga': '#E8001C',
+        'ligue1': '#003189',
       },
       animation: {
         'live-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
